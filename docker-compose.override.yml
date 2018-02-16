@@ -1,0 +1,21 @@
+version: '3.3'
+
+services:
+  redis:
+    ports:
+      - 6380:6379
+
+  mongo:
+    image: mongo
+    ports:
+      - 27018:27018
+    volumes:
+      - mongo:/data/db
+  
+  api:
+    command: yarn run dev
+    ports:
+      - 13000:3000
+      - 19229:9229
+    stdin_open: true
+    tty: true
