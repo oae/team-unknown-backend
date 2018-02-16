@@ -34,3 +34,17 @@ Team Unknown
 * yasinuslu - Ahmet Yasin Uslu - Backend Developer
 * halitogunc - Halit Ogunc - Android Developer
 * msalihkarakasli - Muhammed Salih Karaksli - Android Developer
+
+## Contribution
+
+The only dependencies for development are docker, docker-compose and a text editor.
+
+You can install node modules with following:
+```sh
+docker run --rm -it -v $PWD/api:/opt/app -w /opt/app node:9-alpine yarn
+```
+
+After that you can simply run all services for server with:
+```sh
+docker-compose up -d
+```
