@@ -41,6 +41,8 @@ The only dependencies for development are docker, docker-compose and a text edit
 
 You can install node modules with following:
 ```sh
+git clone https://github.com/team-unknown/team-unknown-backend.git
+cd team-unknown-backend
 docker run --rm -it -v $PWD/api:/opt/app -w /opt/app node:9-alpine yarn
 ```
 
