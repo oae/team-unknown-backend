@@ -20,6 +20,5 @@ POST http://localhost:13000/taker/create-withdrawal/device1
 content-type: application/json
 
 {
-  "lat": "37.797897",
-  "lng": "34.850000"
+  "amount": 100
 }
