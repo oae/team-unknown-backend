@@ -6,6 +6,8 @@ const bodyParser = require('body-parser');
 const config = require('./config');
 const makerService = require('./services/makerService');
 
+require('./worker');
+
 const app = express();
 app.use(bodyParser.json());
 
