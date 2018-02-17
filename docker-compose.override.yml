@@ -19,3 +19,11 @@ services:
       - 19229:9229
     stdin_open: true
     tty: true
+
+  live-location:
+    command: yarn run liveLocation:dev
+    ports:
+      - 23000:3000
+      - 29229:9229
+    stdin_open: true
+    tty: true

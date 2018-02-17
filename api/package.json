@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "cross-env NODE_ENV=development DEBUG=pb:* nodemon --inspect=0.0.0.0:9229 src/",
+    "liveLocation:dev": "cross-env NODE_ENV=development DEBUG=pb:* nodemon --inspect=0.0.0.0:9229 src/liveLocation",
     "lint": "eslint src/",
     "fix": "eslint --fix src/",
     "precommit": "lint-staged"
@@ -30,7 +31,8 @@
     "morgan": "^1.9.0",
     "onesignal-node": "^1.0.2",
     "passport": "^0.4.0",
-    "passport-http-bearer": "^1.0.1"
+    "passport-http-bearer": "^1.0.1",
+    "ws": "^4.0.0"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.1",
