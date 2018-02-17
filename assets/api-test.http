@@ -1,8 +1,7 @@
-POST http://localhost:13000/maker/save-settings/device1
+POST http://localhost:13000/maker/save-settings/maker-device1
 content-type: application/json
 
 {
-  "online": true,
   "minAmount": 100,
   "maxAmount": 1000,
   "range": 10
@@ -21,4 +20,24 @@ content-type: application/json
 
 {
   "amount": 100
+}
+
+POST http://localhost:13000/maker/register/maker-device1
+content-type: application/json
+
+{
+  "location": {
+    "lat": "37.797897",
+    "lng": "34.850000"
+  }
+}
+
+POST http://localhost:13000/maker/update-location/maker-device1
+content-type: application/json
+
+{
+  "location": {
+    "lat": "37.797897",
+    "lng": "38.850000"
+  }
 }

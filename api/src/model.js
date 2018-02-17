@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const bluebird = require('bluebird');
+
 const { WithdrawalStatus } = require('./constants');
 
 const Schema = mongoose.Schema;
@@ -39,8 +41,8 @@ const Maker = mongoose.model('Maker', MakerSchema);
 const Taker = mongoose.model('Taker', TakerSchema);
 const Withdrawal = mongoose.model('Withdrawal', WithdrawalSchema);
 
-module.exports = {
+module.exports = bluebird.promisifyAll({
   Maker,
   Taker,
   Withdrawal,
-};
+});

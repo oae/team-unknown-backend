@@ -24,23 +24,31 @@ const handle = handler => async (req, res) => {
   try {
     const response = await handler(req.body, req.params, { req, res });
     res.json({
-      err: false,
+      error: false,
       data: response,
     });
-  } catch (err) {
+  } catch (error) {
     res.json({
-      err: true,
-      message: err.stack,
+      error: true,
+      message: error.message,
+      stack: error.stack,
+      payload: error.payload || {},
     });
   }
 };
 
+app.post('/maker/register/:deviceId', handle(makerService.register));
 app.post('/maker/save-settings/:deviceId', handle(makerService.saveSettings));
+app.post(
+  '/maker/update-location/:deviceId',
+  handle(makerService.updateLocation)
+);
+
+app.post('/taker/register/:deviceId', handle(takerService.register));
 app.post(
   '/taker/create-withdrawal/:deviceId',
   handle(takerService.createWithdrawal)
 );
-app.post('/taker/register/:deviceId', handle(takerService.register));
 
 app.listen(process.env.PORT, function() {
   debug('http server is listening on port %s', process.env.PORT);

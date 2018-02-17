@@ -1,23 +1,25 @@
 const debug = require('debug')('pb:services:taker');
-const _ = require('lodash');
 const bluebird = require('bluebird');
+
 const { Withdrawal, Taker } = bluebird.promisifyAll(require('../model'));
-const { WithdrawalStatus, MAXIMUM_WITHDRAWAL_AMOUNT } = require('../constants');
-const { latLngToPoint } = require('../utils');
+const {
+  WithdrawalStatus,
+  TAKER_MIN_AMOUNT,
+  TAKER_MAX_AMOUNT,
+} = require('../constants');
+const { latLngToPoint, validateNumber } = require('../utils');
 const { findMaker } = require('../queue');
 
 async function createWithdrawal(body, params) {
   const { deviceId } = params;
   const { amount } = body;
 
-  if (!_.isFinite(amount) || amount > MAXIMUM_WITHDRAWAL_AMOUNT) {
-    debug(
-      'Requested withdrawal amount is more than allowed %d amount',
-      MAXIMUM_WITHDRAWAL_AMOUNT
-    );
-
-    throw new Error();
-  }
+  validateNumber({
+    number: amount,
+    min: TAKER_MIN_AMOUNT,
+    max: TAKER_MAX_AMOUNT,
+    fieldName: 'amount',
+  });
 
   const taker = await Taker.findOneAsync({ deviceId });
 
