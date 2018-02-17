@@ -30,10 +30,10 @@ ParanBende is an application that lets you convert your online money into cash w
 Team Unknown
 
 ### Members
-* oae - Osman Alperen Elhan - Backend Developer
-* yasinuslu - Ahmet Yasin Uslu - Backend Developer
-* halitogunc - Halit Ogunc - Android Developer
-* msalihkarakasli - Muhammed Salih Karaksli - Android Developer
+* [@oae](https://github.com/oae) - Osman Alperen Elhan - Backend Developer
+* [@yasinuslu](https://github.com/yasinuslu) - Ahmet Yasin Uslu - Backend Developer
+* [@halitogunc](https://github.com/halitogunc) - Halit Ogunc - Android Developer
+* [@msalihkarakasli](https://github.com/msalihkarakasli) - Muhammed Salih Karakasli - Android Developer
 
 ## Contribution
 
