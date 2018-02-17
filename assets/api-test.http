@@ -1,5 +1,6 @@
 POST http://localhost:13000/maker/save-settings/maker-device1
 content-type: application/json
+Authorization: Bearer 5a87cfc57a43510ac0cb93f2
 
 {
   "minAmount": 100,

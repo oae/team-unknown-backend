@@ -26,7 +26,9 @@
     "ioredis": "^3.2.2",
     "lodash": "^4.17.5",
     "mongoose": "^5.0.6",
-    "mongoose-timestamp": "^0.6.0"
+    "mongoose-timestamp": "^0.6.0",
+    "passport": "^0.4.0",
+    "passport-http-bearer": "^1.0.1"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.1",

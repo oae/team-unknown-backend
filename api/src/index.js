@@ -2,8 +2,12 @@ const debug = require('debug')('pb:server');
 const mongoose = require('mongoose');
 const express = require('express');
 const bodyParser = require('body-parser');
+const passport = require('passport');
+const BearerStrategy = require('passport-http-bearer').Strategy;
 
 const config = require('./config');
+const { Token } = require('./model');
+const { UserNotFoundError } = require('./errors');
 const makerService = require('./services/makerService');
 const takerService = require('./services/takerService');
 const userService = require('./services/userService');
@@ -20,6 +24,26 @@ mongoose.connect(config.mainMongo, err => {
   }
   debug('Successfully connected to db %s', config.mainMongo);
 });
+
+passport.use(
+  new BearerStrategy(async function(tokenStr, done) {
+    try {
+      const token = await Token.findOne({
+        _id: tokenStr,
+      })
+        .populate('user')
+        .exec();
+
+      if (!token || !token.user) {
+        throw new UserNotFoundError('There is no user that has this token');
+      }
+
+      done(null, token.user);
+    } catch (err) {
+      done(err);
+    }
+  })
+);
 
 const handle = handler => async (req, res) => {
   try {
@@ -38,16 +62,37 @@ const handle = handler => async (req, res) => {
   }
 };
 
-app.post('/maker/register/:deviceId', handle(makerService.register));
-app.post('/maker/save-settings/:deviceId', handle(makerService.saveSettings));
+const authenticate = passport.authenticate('bearer', {
+  session: false,
+});
+
+app.post(
+  '/maker/register/:deviceId',
+  authenticate,
+  handle(makerService.register)
+);
+
+app.post(
+  '/maker/save-settings/:deviceId',
+  authenticate,
+  handle(makerService.saveSettings)
+);
+
 app.post(
   '/maker/update-location/:deviceId',
+  authenticate,
   handle(makerService.updateLocation)
 );
 
-app.post('/taker/register/:deviceId', handle(takerService.register));
+app.post(
+  '/taker/register/:deviceId',
+  authenticate,
+  handle(takerService.register)
+);
+
 app.post(
   '/taker/create-withdrawal/:deviceId',
+  authenticate,
   handle(takerService.createWithdrawal)
 );
 
