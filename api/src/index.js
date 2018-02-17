@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 
 const config = require('./config');
 const makerService = require('./services/makerService');
+const takerService = require('./services/takerService');
 
 const app = express();
 app.use(bodyParser.json());
@@ -33,6 +34,11 @@ const handle = handler => async (req, res) => {
 };
 
 app.post('/maker/save-settings/:deviceId', handle(makerService.saveSettings));
+app.post(
+  '/taker/create-withdrawal/:deviceId',
+  handle(takerService.createWithdrawal)
+);
+app.post('/taker/register/:deviceId', handle(takerService.register));
 
 app.listen(process.env.PORT, function() {
   debug('http server is listening on port %s', process.env.PORT);

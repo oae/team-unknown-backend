@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { WithdrawalStatus } = require('./constants');
 
 const Schema = mongoose.Schema;
 
@@ -9,12 +10,12 @@ const LocationSchema = new Schema({
 
 const userDescription = {
   deviceId: String,
-  online: Boolean,
   location: LocationSchema,
 };
 
 const MakerSchema = new Schema({
   ...userDescription,
+  online: Boolean,
   minAmount: Number,
   maxAmount: Number,
   range: Number,
@@ -28,6 +29,10 @@ const WithdrawalSchema = new Schema({
   amount: Number,
   maker: MakerSchema,
   taker: TakerSchema,
+  status: {
+    type: String,
+    enum: Object.values(WithdrawalStatus),
+  },
 });
 
 const Maker = mongoose.model('Maker', MakerSchema);
