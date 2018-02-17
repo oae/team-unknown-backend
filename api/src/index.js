@@ -7,6 +7,8 @@ const config = require('./config');
 const makerService = require('./services/makerService');
 const takerService = require('./services/takerService');
 
+require('./worker');
+
 const app = express();
 app.use(bodyParser.json());
 
