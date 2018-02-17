@@ -1,6 +1,17 @@
-POST http://localhost:13000/maker/save-settings/maker-device1
+POST http://localhost:13000/user/update-location
 content-type: application/json
-Authorization: Bearer 5a87cfc57a43510ac0cb93f2
+Authorization: Bearer demo-user-token
+
+{
+  "location": {
+    "lat": "37.797897",
+    "lng": "39.850000"
+  }
+}
+
+POST http://localhost:13000/maker/save-settings
+content-type: application/json
+Authorization: Bearer demo-user-token
 
 {
   "minAmount": 100,
@@ -8,39 +19,12 @@ Authorization: Bearer 5a87cfc57a43510ac0cb93f2
   "range": 10
 }
 
-POST http://localhost:13000/taker/register/device1
+POST http://localhost:13000/taker/create-withdrawal
 content-type: application/json
-
-{
-  "lat": "37.797897",
-  "lng": "34.850000"
-}
-
-POST http://localhost:13000/taker/create-withdrawal/device1
-content-type: application/json
+Authorization: Bearer demo-user-token
 
 {
   "amount": 100
-}
-
-POST http://localhost:13000/maker/register/maker-device1
-content-type: application/json
-
-{
-  "location": {
-    "lat": "37.797897",
-    "lng": "34.850000"
-  }
-}
-
-POST http://localhost:13000/maker/update-location/maker-device1
-content-type: application/json
-
-{
-  "location": {
-    "lat": "37.797897",
-    "lng": "38.850000"
-  }
 }
 
 POST http://localhost:13000/user/register

@@ -8,7 +8,7 @@ const {
   AuthenticationError,
   UserAlreadyExistsError,
 } = require('../errors');
-const { validateEmail, validatePassword } = require('../utils');
+const { validateEmail, validatePassword, latLngToPoint } = require('../utils');
 
 async function createToken(user) {
   debug('creating token for %s', user.email);
@@ -81,7 +81,21 @@ async function login(body) {
   };
 }
 
+async function updateLocation(body, req) {
+  const { user } = req;
+  const { location: { lat, lng } } = body;
+
+  user.location = latLngToPoint(lat, lng);
+
+  await user.saveAsync();
+
+  debug('updated location of user %s with %o', user.id, user.location);
+
+  return user;
+}
+
 module.exports = {
   register,
   login,
+  updateLocation,
 };

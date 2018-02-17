@@ -12,6 +12,7 @@ const makerService = require('./services/makerService');
 const takerService = require('./services/takerService');
 const userService = require('./services/userService');
 
+require('./demo');
 require('./worker');
 
 const app = express();
@@ -28,11 +29,20 @@ mongoose.connect(config.mainMongo, err => {
 passport.use(
   new BearerStrategy(async function(tokenStr, done) {
     try {
-      const token = await Token.findOne({
-        _id: tokenStr,
-      })
-        .populate('user')
-        .exec();
+      let token;
+      if (tokenStr === 'demo-user-token') {
+        token = await Token.findOne({
+          name: 'demo-user',
+        })
+          .populate('user')
+          .exec();
+      } else {
+        token = await Token.findOne({
+          _id: tokenStr,
+        })
+          .populate('user')
+          .exec();
+      }
 
       if (!token || !token.user) {
         throw new UserNotFoundError('There is no user that has this token');
@@ -47,7 +57,7 @@ passport.use(
 
 const handle = handler => async (req, res) => {
   try {
-    const response = await handler(req.body, req.params, { req, res });
+    const response = await handler(req.body, req, res);
     res.json({
       error: false,
       data: response,
@@ -66,40 +76,27 @@ const authenticate = passport.authenticate('bearer', {
   session: false,
 });
 
+app.get('/test', (req, res) => res.json({ err: false }));
+
+app.post('/user/register', handle(userService.register));
+app.post('/user/login', handle(userService.login));
 app.post(
-  '/maker/register/:deviceId',
+  '/user/update-location',
   authenticate,
-  handle(makerService.register)
+  handle(userService.updateLocation)
 );
 
 app.post(
-  '/maker/save-settings/:deviceId',
+  '/maker/save-settings',
   authenticate,
   handle(makerService.saveSettings)
 );
 
 app.post(
-  '/maker/update-location/:deviceId',
-  authenticate,
-  handle(makerService.updateLocation)
-);
-
-app.post(
-  '/taker/register/:deviceId',
-  authenticate,
-  handle(takerService.register)
-);
-
-app.post(
-  '/taker/create-withdrawal/:deviceId',
+  '/taker/create-withdrawal',
   authenticate,
   handle(takerService.createWithdrawal)
 );
-
-app.post('/user/register', handle(userService.register));
-app.post('/user/login', handle(userService.login));
-
-app.get('/test', (req, res) => res.json({ err: false }));
 
 app.listen(process.env.PORT, '0.0.0.0', function() {
   debug('http server is listening on port %s', process.env.PORT);

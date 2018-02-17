@@ -1,17 +1,17 @@
 const debug = require('debug')('pb:services:taker');
 const bluebird = require('bluebird');
 
-const { Withdrawal, Taker } = bluebird.promisifyAll(require('../model'));
+const { Withdrawal } = bluebird.promisifyAll(require('../model'));
 const {
   WithdrawalStatus,
   TAKER_MIN_AMOUNT,
   TAKER_MAX_AMOUNT,
 } = require('../constants');
-const { latLngToPoint, validateNumber } = require('../utils');
+const { validateNumber } = require('../utils');
 const { findMaker } = require('../queue');
 
-async function createWithdrawal(body, params) {
-  const { deviceId } = params;
+async function createWithdrawal(body, req) {
+  const { user } = req;
   const { amount } = body;
 
   validateNumber({
@@ -21,17 +21,15 @@ async function createWithdrawal(body, params) {
     fieldName: 'amount',
   });
 
-  const taker = await Taker.findOneAsync({ deviceId });
-
   const withdrawal = new Withdrawal({
     status: WithdrawalStatus.PENDING,
     amount,
-    taker,
+    taker: user,
   });
 
   await withdrawal.saveAsync();
 
-  debug('Created a new withdrawal for %s', deviceId);
+  debug('Created a new withdrawal for %s', user.id);
 
   const job = await findMaker
     .createJob({
@@ -46,23 +44,6 @@ async function createWithdrawal(body, params) {
   return withdrawal;
 }
 
-async function register(body, params) {
-  const { deviceId } = params;
-  const { lat, lng } = body;
-
-  const taker = new Taker({
-    deviceId,
-    location: latLngToPoint(lat, lng),
-  });
-
-  await taker.saveAsync();
-
-  debug('created a new taker with id %s', deviceId);
-
-  return taker;
-}
-
 module.exports = {
   createWithdrawal,
-  register,
 };

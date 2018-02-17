@@ -1,8 +1,6 @@
 const debug = require('debug')('pb:services:maker');
 
-const { MakerNotFoundError } = require('../errors');
-const { latLngToPoint, validateNumber } = require('../utils');
-const { Maker } = require('../model');
+const { validateNumber } = require('../utils');
 const {
   MAKER_MAX_AMOUNT,
   MAKER_MIN_AMOUNT,
@@ -10,37 +8,10 @@ const {
   MAKER_MAX_RANGE,
 } = require('../constants');
 
-async function register(body, params) {
-  const { deviceId } = params;
-  const { location: { lat, lng } } = body;
-
-  let maker = new Maker({
-    deviceId,
-    location: latLngToPoint(lat, lng),
-  });
-
-  maker = await maker.saveAsync();
-
-  debug('created a new maker with id %s', deviceId);
-
-  return maker;
-}
-
-async function saveSettings(body, params) {
+async function saveSettings(body, req) {
   try {
-    const { deviceId } = params;
+    let { user } = req;
     const { minAmount, maxAmount, range } = body;
-
-    debug('finding maker with deviceId %s', deviceId);
-    let maker = await Maker.findOne({
-      deviceId,
-    });
-
-    if (!maker) {
-      throw new MakerNotFoundError(
-        `There is no maker with deviceId: ${deviceId}`
-      );
-    }
 
     validateNumber({
       number: minAmount,
@@ -63,50 +34,23 @@ async function saveSettings(body, params) {
       fieldName: 'range',
     });
 
-    maker.minAmount = minAmount;
-    maker.maxAmount = maxAmount;
-    maker.range = range;
+    user.maker = {
+      minAmount,
+      maxAmount,
+      range,
+    };
 
-    maker = await maker.saveAsync();
+    await user.saveAsync();
 
-    debug('saved maker settings %o', maker);
+    debug('saved maker settings %o', user);
 
-    return maker;
+    return user;
   } catch (err) {
     debug('error while saving maker settings %o', err);
     throw err;
   }
 }
 
-async function updateLocation(body, params) {
-  const { deviceId } = params;
-  const { location: { lat, lng } } = body;
-
-  let maker = await Maker.findOne({
-    deviceId,
-  });
-
-  if (!maker) {
-    throw new MakerNotFoundError(
-      `There is no maker with deviceId: ${deviceId}`
-    );
-  }
-
-  maker.location = latLngToPoint(lat, lng);
-
-  // Object.assign({
-  //   location: ,
-  // });
-
-  maker = await maker.saveAsync();
-
-  debug('updated location of maker %s with %o', deviceId, maker.location);
-
-  return maker;
-}
-
 module.exports = {
-  register,
   saveSettings,
-  updateLocation,
 };
