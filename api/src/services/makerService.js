@@ -1,5 +1,7 @@
 const debug = require('debug')('pb:services:maker');
 
+const { confirmWithdrawalNotificationContent } = require('../templates');
+const { sendNotification } = require('../notification');
 const { validateNumber } = require('../utils');
 const { Withdrawal } = require('../model');
 const { WithdrawalStatus } = require('../constants');
@@ -76,7 +78,10 @@ async function confirmWithdrawal(body, req) {
     let { user } = req;
     const { withdrawalId, isApproved } = body;
 
-    const withdrawal = await Withdrawal.findById(withdrawalId);
+    const withdrawal = await Withdrawal.findById(withdrawalId)
+      .populate('maker')
+      .populate('taker')
+      .exec();
 
     withdrawal.maker = user;
     withdrawal.makerLocation = user.location;
@@ -91,6 +96,26 @@ async function confirmWithdrawal(body, req) {
     );
 
     await withdrawal.save();
+
+    const maker = withdrawal.maker;
+    const taker = withdrawal.taker;
+
+    sendNotification({
+      contents: {
+        en: confirmWithdrawalNotificationContent(
+          { distance: maker.distance, amount: withdrawal.amount },
+          { language: 'en' }
+        ),
+        tr: confirmWithdrawalNotificationContent(
+          { distance: maker.distance, amount: withdrawal.amount },
+          { language: 'tr' }
+        ),
+      },
+      data: {
+        userId: taker._id,
+        withdrawal,
+      },
+    });
 
     return withdrawal;
   } catch (err) {

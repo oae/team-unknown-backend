@@ -57,7 +57,7 @@ async function createWithdrawal(body, req) {
       },
       data: {
         userId: maker._id,
-        withdrawalId: withdrawal.id,
+        withdrawal,
       },
     });
   });
