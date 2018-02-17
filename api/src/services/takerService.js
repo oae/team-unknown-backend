@@ -55,7 +55,10 @@ async function createWithdrawal(body, req) {
           { language: 'tr' }
         ),
       },
-      data: { withdrawalId: withdrawal.id },
+      data: {
+        userId: result._id,
+        withdrawalId: withdrawal.id,
+      },
     });
   });
 
