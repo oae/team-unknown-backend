@@ -87,6 +87,7 @@ app.post(
   authenticate,
   handle(userService.updateLocation)
 );
+app.get('/user/get', authenticate, handle(userService.get));
 
 app.post(
   '/maker/toggle-online',

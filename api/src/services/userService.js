@@ -1,6 +1,6 @@
 const debug = require('debug')('pb:services:maker');
-
 const bcrypt = require('bcryptjs');
+const gravatar = require('gravatar');
 
 const { User, Token } = require('../model');
 const {
@@ -99,9 +99,17 @@ async function updateLocation(body, req) {
   return user;
 }
 
+async function get(body, req) {
+  return {
+    ...req.user.toJSON(),
+    avatar: gravatar.url(req.user.email, { size: 256 }),
+  };
+}
+
 module.exports = {
   createUser,
   register,
   login,
   updateLocation,
+  get,
 };
