@@ -79,7 +79,6 @@ async function confirmWithdrawal(body, req) {
     const { withdrawalId, isApproved } = body;
 
     const withdrawal = await Withdrawal.findById(withdrawalId)
-      .populate('maker')
       .populate('taker')
       .exec();
 
@@ -97,17 +96,16 @@ async function confirmWithdrawal(body, req) {
 
     await withdrawal.save();
 
-    const maker = withdrawal.maker;
     const taker = withdrawal.taker;
 
     sendNotification({
       contents: {
         en: confirmWithdrawalNotificationContent(
-          { distance: maker.distance, amount: withdrawal.amount },
+          { amount: withdrawal.amount },
           { language: 'en' }
         ),
         tr: confirmWithdrawalNotificationContent(
-          { distance: maker.distance, amount: withdrawal.amount },
+          { amount: withdrawal.amount },
           { language: 'tr' }
         ),
       },
