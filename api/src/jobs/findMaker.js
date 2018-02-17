@@ -50,16 +50,13 @@ module.exports = async job => {
       );
     }
 
-    const matchedMaker = makers[0];
+    debug(
+      'Found %d matching makers for withdrawal: %s',
+      makers.length,
+      withdrawalId
+    );
 
-    debug('successfully found a maker for %s', withdrawalId);
-
-    withdrawal.maker = matchedMaker;
-    withdrawal.makerLocation = matchedMaker.location;
-
-    await withdrawal.save();
-
-    return matchedMaker;
+    return makers[0];
   } catch (err) {
     debug('error while finding maker %s', err.stack);
     throw err;

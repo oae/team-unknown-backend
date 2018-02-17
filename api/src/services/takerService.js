@@ -43,20 +43,20 @@ async function createWithdrawal(body, req) {
     .backoff('exponential', 1000)
     .save();
 
-  job.on('succeeded', result => {
+  job.on('succeeded', maker => {
     sendNotification({
       contents: {
         en: withdrawalNotificationContent(
-          { distance: result.distance, amount: withdrawal.amount },
+          { distance: maker.distance, amount: withdrawal.amount },
           { language: 'en' }
         ),
         tr: withdrawalNotificationContent(
-          { distance: result.distance, amount: withdrawal.amount },
+          { distance: maker.distance, amount: withdrawal.amount },
           { language: 'tr' }
         ),
       },
       data: {
-        userId: result._id,
+        userId: maker._id,
         withdrawalId: withdrawal.id,
       },
     });

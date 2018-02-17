@@ -101,6 +101,12 @@ app.post(
 );
 
 app.post(
+  '/maker/confirm-withdrawal',
+  authenticate,
+  handle(makerService.confirmWithdrawal)
+);
+
+app.post(
   '/taker/create-withdrawal',
   authenticate,
   handle(takerService.createWithdrawal)

@@ -1,6 +1,8 @@
 const debug = require('debug')('pb:services:maker');
 
 const { validateNumber } = require('../utils');
+const { Withdrawal } = require('../model');
+const { WithdrawalStatus } = require('../constants');
 const {
   MAKER_MAX_AMOUNT,
   MAKER_MIN_AMOUNT,
@@ -69,7 +71,36 @@ async function toggleOnline(body, req) {
   }
 }
 
+async function confirmWithdrawal(body, req) {
+  try {
+    let { user } = req;
+    const { withdrawalId, isApproved } = body;
+
+    const withdrawal = await Withdrawal.findById(withdrawalId);
+
+    withdrawal.maker = user;
+    withdrawal.makerLocation = user.location;
+    withdrawal.status = isApproved
+      ? WithdrawalStatus.MATCHED
+      : WithdrawalStatus.CANCELLED;
+
+    debug(
+      'Withdrawal status set to %s for withdrawal: %s',
+      withdrawal.status,
+      withdrawalId
+    );
+
+    await withdrawal.save();
+
+    return withdrawal;
+  } catch (err) {
+    debug('error while saving withdrawal request %o', err);
+    throw err;
+  }
+}
+
 module.exports = {
   saveSettings,
   toggleOnline,
+  confirmWithdrawal,
 };

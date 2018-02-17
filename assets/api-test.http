@@ -28,6 +28,15 @@ Authorization: Bearer demo-taker-1
   "online": true
 }
 
+POST http://localhost:13000/maker/confirm-withdrawal
+content-type: application/json
+Authorization: Bearer demo-maker-1
+
+{
+  "isApproved": true,
+  "withdrawalId": "5a885ee39409ca0422a3acc2"
+}
+
 POST http://localhost:13000/taker/create-withdrawal
 content-type: application/json
 Authorization: Bearer demo-taker-1
