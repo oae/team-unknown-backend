@@ -4,6 +4,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const BearerStrategy = require('passport-http-bearer').Strategy;
+const morgan = require('morgan');
 
 const config = require('./config');
 const { Token } = require('./model');
@@ -17,6 +18,7 @@ require('./worker');
 
 const app = express();
 app.use(bodyParser.json());
+app.use(morgan('tiny'));
 
 mongoose.connect(config.mainMongo, err => {
   if (err) {
@@ -30,9 +32,9 @@ passport.use(
   new BearerStrategy(async function(tokenStr, done) {
     try {
       let token;
-      if (tokenStr === 'demo-user-token') {
+      if (tokenStr.match(/demo/)) {
         token = await Token.findOne({
-          name: 'demo-user',
+          name: tokenStr,
         })
           .populate('user')
           .exec();
@@ -50,7 +52,7 @@ passport.use(
 
       done(null, token.user);
     } catch (err) {
-      done(err);
+      done(null, false, { message: 'Incorrect token' });
     }
   })
 );

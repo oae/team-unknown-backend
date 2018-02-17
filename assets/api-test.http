@@ -1,6 +1,6 @@
 POST http://localhost:13000/user/update-location
 content-type: application/json
-Authorization: Bearer demo-user-token
+Authorization: Bearer demo-taker-1
 
 {
   "location": {
@@ -11,7 +11,7 @@ Authorization: Bearer demo-user-token
 
 POST http://localhost:13000/maker/save-settings
 content-type: application/json
-Authorization: Bearer demo-user-token
+Authorization: Bearer demo-taker-1
 
 {
   "minAmount": 100,
@@ -21,7 +21,7 @@ Authorization: Bearer demo-user-token
 
 POST http://localhost:13000/maker/toggle-online
 content-type: application/json
-Authorization: Bearer demo-user-token
+Authorization: Bearer demo-taker-1
 
 {
   "online": true
@@ -29,7 +29,7 @@ Authorization: Bearer demo-user-token
 
 POST http://localhost:13000/taker/create-withdrawal
 content-type: application/json
-Authorization: Bearer demo-user-token
+Authorization: Bearer demo-taker-1
 
 {
   "amount": 100
@@ -39,7 +39,7 @@ POST http://localhost:13000/user/register
 content-type: application/json
 
 {
-  "email": "a@a",
+  "email": "a@b",
   "password": "123456"
 }
 

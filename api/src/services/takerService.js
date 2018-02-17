@@ -5,8 +5,9 @@ const {
   WithdrawalStatus,
   TAKER_MIN_AMOUNT,
   TAKER_MAX_AMOUNT,
+  DEFAULT_LOCATION,
 } = require('../constants');
-const { validateNumber } = require('../utils');
+const { validateNumber, latLngToPoint } = require('../utils');
 const { findMaker } = require('../queue');
 
 async function createWithdrawal(body, req) {
@@ -24,7 +25,7 @@ async function createWithdrawal(body, req) {
     status: WithdrawalStatus.PENDING,
     amount,
     taker: user,
-    takerLocation: user.location,
+    takerLocation: user.location || latLngToPoint(...DEFAULT_LOCATION),
   });
 
   await withdrawal.save();

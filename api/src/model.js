@@ -5,13 +5,12 @@ const { WithdrawalStatus } = require('./constants');
 
 const Schema = mongoose.Schema;
 
-const LocationSchema = new Schema({
-  type: String,
-  coordinates: [Number],
-});
+const locationDefinition = {
+  type: [Number],
+  index: '2d',
+};
 
 const MakerSchema = new Schema({
-  user: { type: Schema.Types.ObjectId, ref: 'User' },
   online: Boolean,
   minAmount: Number,
   maxAmount: Number,
@@ -21,7 +20,7 @@ const MakerSchema = new Schema({
 const UserSchema = new Schema({
   email: { type: String, index: { unique: true } },
   password: String,
-  location: LocationSchema,
+  location: locationDefinition,
   maker: MakerSchema,
 });
 
@@ -34,8 +33,8 @@ const WithdrawalSchema = new Schema({
   amount: Number,
   maker: { type: Schema.Types.ObjectId, ref: 'User' },
   taker: { type: Schema.Types.ObjectId, ref: 'User' },
-  makerLocation: LocationSchema,
-  takerLocation: LocationSchema,
+  makerLocation: locationDefinition,
+  takerLocation: locationDefinition,
   status: {
     type: String,
     enum: Object.values(WithdrawalStatus),

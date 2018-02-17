@@ -22,21 +22,26 @@ async function createToken(user) {
   return token.id;
 }
 
+async function createUser(body) {
+  const { email, password } = body;
+  validateEmail(email);
+  validatePassword(password);
+
+  const passwordHash = await bcrypt.hash(password, 10);
+
+  const user = new User({
+    email,
+    password: passwordHash,
+  });
+
+  await user.save();
+
+  return user;
+}
+
 async function register(body) {
   try {
-    const { email, password } = body;
-    validateEmail(email);
-    validatePassword(password);
-
-    const passwordHash = await bcrypt.hash(password, 10);
-
-    let user = new User({
-      email,
-      password: passwordHash,
-    });
-
-    user = await user.save();
-
+    const user = await createUser(body);
     const token = await createToken(user);
 
     return {
@@ -95,6 +100,7 @@ async function updateLocation(body, req) {
 }
 
 module.exports = {
+  createUser,
   register,
   login,
   updateLocation,

@@ -3,10 +3,7 @@ const _ = require('lodash');
 const { ValidationError } = require('./errors');
 
 function latLngToPoint(lat, lng) {
-  return {
-    type: 'Point',
-    coordinates: [lng, lat],
-  };
+  return [lng, lat];
 }
 
 const RE_EMAIL = /[^\\.\\s@:][^\\s@:]*(?!\\.)@[^\\.\\s@]+(?:\\.[^\\.\\s@]+)*/;

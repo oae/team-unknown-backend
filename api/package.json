@@ -26,6 +26,7 @@
     "lodash": "^4.17.5",
     "mongoose": "^5.0.6",
     "mongoose-timestamp": "^0.6.0",
+    "morgan": "^1.9.0",
     "passport": "^0.4.0",
     "passport-http-bearer": "^1.0.1"
   },
