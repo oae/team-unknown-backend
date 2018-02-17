@@ -1,7 +1,6 @@
 const debug = require('debug')('pb:services:taker');
-const bluebird = require('bluebird');
 
-const { Withdrawal } = bluebird.promisifyAll(require('../model'));
+const { Withdrawal } = require('../model');
 const {
   WithdrawalStatus,
   TAKER_MIN_AMOUNT,

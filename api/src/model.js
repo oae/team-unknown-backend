@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const bluebird = require('bluebird');
 const timestamps = require('mongoose-timestamp');
 
 const { WithdrawalStatus } = require('./constants');
@@ -51,8 +50,8 @@ const User = mongoose.model('User', UserSchema);
 const Token = mongoose.model('Token', TokenSchema);
 const Withdrawal = mongoose.model('Withdrawal', WithdrawalSchema);
 
-module.exports = bluebird.promisifyAll({
+module.exports = {
   User,
   Token,
   Withdrawal,
-});
+};
