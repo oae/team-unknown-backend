@@ -17,13 +17,12 @@ const userDescription = {
 };
 
 const UserSchema = new Schema({
-  email: String,
+  email: { type: String, index: { unique: true } },
   password: String,
-  token: String,
 });
 
 const TokenSchema = new Schema({
-  token: String,
+  user: { type: Schema.Types.ObjectId, ref: 'User' },
 });
 
 const MakerSchema = new Schema({

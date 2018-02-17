@@ -3,46 +3,55 @@ const debug = require('debug')('pb:services:maker');
 const bcrypt = require('bcryptjs');
 
 const { User, Token } = require('../model');
-const { UserNotFoundError, AuthenticationError } = require('../errors');
+const {
+  UserNotFoundError,
+  AuthenticationError,
+  UserAlreadyExistsError,
+} = require('../errors');
 const { validateEmail, validatePassword } = require('../utils');
-
-function generateToken(user) {
-  return bcrypt.hash(`${user.id}_${new Date().getTime()}`, 10);
-}
 
 async function createToken(user) {
   debug('creating token for %s', user.email);
-  const token = await generateToken(user);
 
-  let tokenObj = new Token({
-    token,
+  let token = new Token({
+    user: user.id,
   });
 
-  tokenObj = await tokenObj.save();
+  token = await token.save();
 
-  return tokenObj;
+  return token.id;
 }
 
 async function register(body) {
-  const { email, password } = body;
-  validateEmail(email);
-  validatePassword(password);
+  try {
+    const { email, password } = body;
+    validateEmail(email);
+    validatePassword(password);
 
-  const passwordHash = await bcrypt.hash(password, 10);
+    const passwordHash = await bcrypt.hash(password, 10);
 
-  let user = new User({
-    email,
-    password: passwordHash,
-  });
+    let user = new User({
+      email,
+      password: passwordHash,
+    });
 
-  user = await user.save();
+    user = await user.save();
 
-  const token = await createToken(user);
+    const token = await createToken(user);
 
-  return {
-    user,
-    token,
-  };
+    return {
+      user,
+      token,
+    };
+  } catch (err) {
+    debug('error while registering %s', err.stack);
+
+    if (err.message.match(/email_1 dup key/)) {
+      throw new UserAlreadyExistsError('User already exists');
+    }
+
+    throw err;
+  }
 }
 
 async function login(body) {

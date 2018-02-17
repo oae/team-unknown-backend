@@ -54,6 +54,8 @@ app.post(
 app.post('/user/register', handle(userService.register));
 app.post('/user/login', handle(userService.login));
 
-app.listen(process.env.PORT, function() {
+app.get('/test', (req, res) => res.json({ err: false }));
+
+app.listen(process.env.PORT, '0.0.0.0', function() {
   debug('http server is listening on port %s', process.env.PORT);
 });
