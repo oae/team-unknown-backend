@@ -4,7 +4,7 @@ const WebSocket = require('ws');
 const EventEmitter = require('events').EventEmitter;
 const Redis = require('ioredis');
 
-const { ChannelNotExistsError, MethodNotExistsError } = require('./errors');
+const { ChannelNotExistsError, MethodNotFoundError } = require('./errors');
 const config = require('./config');
 
 class LiveLocation extends EventEmitter {
@@ -43,7 +43,7 @@ class LiveLocation extends EventEmitter {
     if (methodName === 'update-location') {
       return this.updateLocation(payload);
     } else {
-      throw new MethodNotExistsError(`There is no method named ${methodName}`);
+      throw new MethodNotFoundError(`There is no method named ${methodName}`);
     }
   }
 
@@ -65,24 +65,30 @@ function parseMessage(message) {
   return JSON.parse(message);
 }
 
-async function subscribe(ws, msg) {
-  if (msg.channel !== 'live-location') {
-    throw new ChannelNotExistsError(`There is no channel named ${msg.channel}`);
-  }
+const messageHandler = {
+  async subscribe(ws, msg) {
+    if (msg.channel !== 'live-location') {
+      throw new ChannelNotExistsError(
+        `There is no channel named ${msg.channel}`
+      );
+    }
 
-  sendMessage(ws, 'response', { error: false }, { channel: msg.channel });
+    sendMessage(ws, 'response', { error: false }, { channel: msg.channel });
 
-  liveLocation.on(`live-location.${msg.payload.id}`, loc => {
-    sendMessage(ws, 'notification', { loc }, { channel: 'live-location' });
-  });
-}
+    liveLocation.on(`live-location.${msg.payload.id}`, loc => {
+      sendMessage(ws, 'notification', { loc }, { channel: 'live-location' });
+    });
+  },
 
-async function method(ws, msg) {
-  const methodName = msg.method;
-  await liveLocation.call(methodName, msg.payload);
-}
+  async method(ws, msg) {
+    const methodName = msg.method;
+    await liveLocation.call(methodName, msg.payload);
+  },
 
-const messageHandler = { subscribe, method };
+  async error(ws, msg) {
+    debug('error on client %o', msg.payload);
+  },
+};
 
 wss.on('connection', function connection(ws) {
   ws.on('message', async function incoming(message) {
@@ -90,9 +96,11 @@ wss.on('connection', function connection(ws) {
       const msg = parseMessage(message);
       const handler = messageHandler[msg.type];
 
+      debug('received %o', msg);
+
       if (!_.isFunction(handler)) {
         debug('message type not found %s', msg.type);
-        throw new MethodNotExistsError(`There is no method named ${msg.type}`);
+        throw new MethodNotFoundError(`There is no method named ${msg.type}`);
       }
 
       handler(ws, msg);
