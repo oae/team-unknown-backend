@@ -6,6 +6,7 @@ const options = { redis: config.mainRedis };
 const findMaker = new Queue('findMaker', {
   ...options,
   removeOnSuccess: true,
+  activateDelayedJobs: true,
 });
 
 module.exports = {
