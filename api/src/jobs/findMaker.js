@@ -3,7 +3,7 @@ const debug = require('debug')('pb:findMaker');
 
 const { Withdrawal, User } = require('../model');
 const { MakerNotFoundError } = require('../errors');
-const { MAKER_MAX_RANGE } = require('../constants');
+const { DISTANCE_MULTIPLIER } = require('../constants');
 
 module.exports = async job => {
   try {
@@ -18,26 +18,48 @@ module.exports = async job => {
       _id: withdrawalId,
     });
 
-    const makers = await User.find()
-      .near('location', {
-        center: withdrawal.takerLocation,
-        maxDistance: MAKER_MAX_RANGE,
-      })
-      .exec();
+    const makers = await User.aggregate([
+      {
+        $geoNear: {
+          near: withdrawal.takerLocation,
+          distanceField: 'distance',
+          distanceMultiplier: DISTANCE_MULTIPLIER,
+          spherical: false,
+          uniqueDocs: true,
+        },
+      },
+      {
+        $addFields: {
+          delta: { $subtract: ['$maker.range', '$distance'] },
+        },
+      },
+      {
+        $match: {
+          'maker.online': true,
+          'maker.minAmount': { $lte: withdrawal.amount },
+          'maker.maxAmount': { $gte: withdrawal.amount },
+          delta: { $gte: 0 },
+        },
+      },
+      { $sort: { delta: 1 } },
+    ]);
 
-    // const availableMakers = _.chain(markets).map();
-
-    debug('found markers: %o', makers);
-
-    const random = Math.random();
-    if (random >= 0.5) {
+    if (makers.length < 1) {
       throw new MakerNotFoundError(
         'We could not find a maker that can suit this withdrawal'
       );
     }
 
+    const matchedMaker = makers[0];
+
     debug('successfully found a maker for %s', withdrawalId);
-    return random;
+
+    withdrawal.maker = matchedMaker;
+    withdrawal.makerLocation = matchedMaker.location;
+
+    await withdrawal.save();
+
+    return matchedMaker;
   } catch (err) {
     debug('error while finding maker %s', err.stack);
     throw err;

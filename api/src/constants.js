@@ -1,5 +1,6 @@
 const WithdrawalStatus = {
-  PENDING: 'pending',
+  MATCHING: 'matching',
+  MATCHED: 'matched',
   CANCELLED: 'cancelled',
   COMPLETED: 'completed',
 };
@@ -14,6 +15,8 @@ const MAKER_MAX_RANGE = 5000;
 
 const DEFAULT_LOCATION = [41.080635, 29.017626];
 
+const DISTANCE_MULTIPLIER = 1000 * 6378.137 * Math.PI / 180;
+
 module.exports = {
   WithdrawalStatus,
   TAKER_MIN_AMOUNT,
@@ -23,4 +26,5 @@ module.exports = {
   MAKER_MIN_RANGE,
   MAKER_MAX_RANGE,
   DEFAULT_LOCATION,
+  DISTANCE_MULTIPLIER,
 };

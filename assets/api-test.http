@@ -4,10 +4,11 @@ Authorization: Bearer demo-taker-1
 
 {
   "location": {
-    "lat": "37.797897",
-    "lng": "39.850000"
+    "lat": "41.082185",
+    "lng": "29.027520"
   }
 }
+
 
 POST http://localhost:13000/maker/save-settings
 content-type: application/json

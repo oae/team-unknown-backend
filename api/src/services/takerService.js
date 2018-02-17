@@ -1,6 +1,9 @@
 const debug = require('debug')('pb:services:taker');
 
+const { sendNotification } = require('../notification');
 const { Withdrawal } = require('../model');
+const { withdrawalNotificationContent } = require('../templates');
+
 const {
   WithdrawalStatus,
   TAKER_MIN_AMOUNT,
@@ -22,7 +25,7 @@ async function createWithdrawal(body, req) {
   });
 
   const withdrawal = new Withdrawal({
-    status: WithdrawalStatus.PENDING,
+    status: WithdrawalStatus.MATCHING,
     amount,
     taker: user,
     takerLocation: user.location || latLngToPoint(...DEFAULT_LOCATION),
@@ -39,6 +42,22 @@ async function createWithdrawal(body, req) {
     .retries(5)
     .backoff('exponential', 1000)
     .save();
+
+  job.on('succeeded', result => {
+    sendNotification({
+      contents: {
+        en: withdrawalNotificationContent(
+          { distance: result.distance, amount: withdrawal.amount },
+          { language: 'en' }
+        ),
+        tr: withdrawalNotificationContent(
+          { distance: result.distance, amount: withdrawal.amount },
+          { language: 'tr' }
+        ),
+      },
+      data: { withdrawalId: withdrawal.id },
+    });
+  });
 
   debug('Created a findMaker job with the id %d', job.id);
 
