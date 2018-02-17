@@ -8,11 +8,7 @@ const { DISTANCE_MULTIPLIER } = require('../constants');
 module.exports = async job => {
   try {
     const { withdrawalId } = job.data;
-    debug(
-      '%d time trying to find maker for %s',
-      job.options.retries,
-      withdrawalId
-    );
+    debug('trying to find maker for %s', withdrawalId);
 
     const withdrawal = await Withdrawal.findOne({
       _id: withdrawalId,

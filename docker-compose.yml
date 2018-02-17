@@ -46,3 +46,18 @@ services:
       PORT: 3000
       REDIS_URL: redis://redis:6379/0
       MONGO_URL: mongodb://mongo:27017/pb-api
+
+  worker:
+    image: node:9-alpine
+    volumes:
+      - yarn:/root/.cache/yarn
+      - npm:/root/.npm
+      - ./api:/opt/app
+    user: root
+    working_dir: /opt/app
+    restart: unless-stopped
+    environment:
+      DEBUG: pb:*
+      PORT: 3000
+      REDIS_URL: redis://redis:6379/0
+      MONGO_URL: mongodb://mongo:27017/pb-api

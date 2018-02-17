@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development DEBUG=pb:* nodemon --inspect=0.0.0.0:9229 src/",
     "liveLocation:dev": "cross-env NODE_ENV=development DEBUG=pb:* nodemon --inspect=0.0.0.0:9229 src/liveLocation",
+    "worker:dev": "cross-env NODE_ENV=development DEBUG=pb:* nodemon --inspect=0.0.0.0:9229 src/worker",
     "lint": "eslint src/",
     "fix": "eslint --fix src/",
     "precommit": "lint-staged"

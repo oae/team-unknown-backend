@@ -10,6 +10,26 @@
       "port": 19229,
       "localRoot": "${workspaceRoot}/api",
       "remoteRoot": "/opt/app"
+    },
+    {
+      "name": "Location Service",
+      "type": "node",
+      "request": "attach",
+      "restart": true,
+      "protocol": "inspector",
+      "port": 29229,
+      "localRoot": "${workspaceRoot}/api",
+      "remoteRoot": "/opt/app"
+    },
+    {
+      "name": "Worker",
+      "type": "node",
+      "request": "attach",
+      "restart": true,
+      "protocol": "inspector",
+      "port": 39229,
+      "localRoot": "${workspaceRoot}/api",
+      "remoteRoot": "/opt/app"
     }
   ]
 }

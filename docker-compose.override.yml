@@ -27,3 +27,11 @@ services:
       - 29229:9229
     stdin_open: true
     tty: true
+
+  worker:
+    command: yarn run worker:dev
+    ports:
+      - 33000:3000
+      - 39229:9229
+    stdin_open: true
+    tty: true

@@ -1,6 +1,8 @@
+const debug = require('debug')('pb:model');
 const mongoose = require('mongoose');
 const timestamps = require('mongoose-timestamp');
 
+const config = require('./config');
 const { WithdrawalStatus } = require('./constants');
 
 const Schema = mongoose.Schema;
@@ -48,6 +50,14 @@ WithdrawalSchema.plugin(timestamps);
 const User = mongoose.model('User', UserSchema);
 const Token = mongoose.model('Token', TokenSchema);
 const Withdrawal = mongoose.model('Withdrawal', WithdrawalSchema);
+
+mongoose.connect(config.mainMongo, err => {
+  if (err) {
+    debug('Error occured during connecting to instance: %o', err);
+    throw err;
+  }
+  debug('Successfully connected to db %s', config.mainMongo);
+});
 
 module.exports = {
   User,

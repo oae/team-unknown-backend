@@ -1,12 +1,10 @@
 const debug = require('debug')('pb:server');
-const mongoose = require('mongoose');
 const express = require('express');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const BearerStrategy = require('passport-http-bearer').Strategy;
 const morgan = require('morgan');
 
-const config = require('./config');
 const { Token } = require('./model');
 const { UserNotFoundError } = require('./errors');
 const makerService = require('./services/makerService');
@@ -14,19 +12,10 @@ const takerService = require('./services/takerService');
 const userService = require('./services/userService');
 
 require('./demo');
-require('./worker');
 
 const app = express();
 app.use(bodyParser.json());
 app.use(morgan('tiny'));
-
-mongoose.connect(config.mainMongo, err => {
-  if (err) {
-    debug('Error occured during connecting to instance: %o', err);
-    throw err;
-  }
-  debug('Successfully connected to db %s', config.mainMongo);
-});
 
 passport.use(
   new BearerStrategy(async function(tokenStr, done) {
