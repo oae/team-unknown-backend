@@ -1,0 +1,9 @@
+POST http://localhost:13000/maker/save-settings/device1
+content-type: application/json
+
+{
+  "online": true,
+  "minAmount": 100,
+  "maxAmount": 1000,
+  "range": 10
+}

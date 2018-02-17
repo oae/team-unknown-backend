@@ -1,11 +1,13 @@
 const debug = require('debug')('pb:server');
 const mongoose = require('mongoose');
-
 const express = require('express');
-const app = express();
+const bodyParser = require('body-parser');
 
 const config = require('./config');
-const withdrawal = require('./withdrawal/routes');
+const makerService = require('./services/makerService');
+
+const app = express();
+app.use(bodyParser.json());
 
 mongoose.connect(config.mainMongo, err => {
   if (err) {
@@ -15,7 +17,22 @@ mongoose.connect(config.mainMongo, err => {
   debug('Successfully connected to db %s', config.mainMongo);
 });
 
-app.use('/withdrawal', withdrawal);
+const handle = handler => async (req, res) => {
+  try {
+    const response = await handler(req.body, req.params, { req, res });
+    res.json({
+      err: false,
+      data: response,
+    });
+  } catch (err) {
+    res.json({
+      err: true,
+      message: err.stack,
+    });
+  }
+};
+
+app.post('/maker/save-settings/:deviceId', handle(makerService.saveSettings));
 
 app.listen(process.env.PORT, function() {
   debug('http server is listening on port %s', process.env.PORT);
