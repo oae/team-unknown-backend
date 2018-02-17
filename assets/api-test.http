@@ -19,6 +19,14 @@ Authorization: Bearer demo-user-token
   "range": 10
 }
 
+POST http://localhost:13000/maker/toggle-online
+content-type: application/json
+Authorization: Bearer demo-user-token
+
+{
+  "online": true
+}
+
 POST http://localhost:13000/taker/create-withdrawal
 content-type: application/json
 Authorization: Bearer demo-user-token

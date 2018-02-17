@@ -87,6 +87,12 @@ app.post(
 );
 
 app.post(
+  '/maker/toggle-online',
+  authenticate,
+  handle(makerService.toggleOnline)
+);
+
+app.post(
   '/maker/save-settings',
   authenticate,
   handle(makerService.saveSettings)

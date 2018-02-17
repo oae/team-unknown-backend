@@ -24,9 +24,10 @@ async function createWithdrawal(body, req) {
     status: WithdrawalStatus.PENDING,
     amount,
     taker: user,
+    takerLocation: user.location,
   });
 
-  await withdrawal.saveAsync();
+  await withdrawal.save();
 
   debug('Created a new withdrawal for %s', user.id);
 

@@ -87,7 +87,7 @@ async function updateLocation(body, req) {
 
   user.location = latLngToPoint(lat, lng);
 
-  await user.saveAsync();
+  await user.save();
 
   debug('updated location of user %s with %o', user.id, user.location);
 

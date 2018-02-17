@@ -40,7 +40,25 @@ async function saveSettings(body, req) {
       range,
     };
 
-    await user.saveAsync();
+    await user.save();
+
+    debug('saved maker settings %o', user);
+
+    return user;
+  } catch (err) {
+    debug('error while saving maker settings %o', err);
+    throw err;
+  }
+}
+
+async function toggleOnline(body, req) {
+  try {
+    let { user } = req;
+    const { online } = body;
+
+    user.maker.online = online;
+
+    await user.save();
 
     debug('saved maker settings %o', user);
 
@@ -53,4 +71,5 @@ async function saveSettings(body, req) {
 
 module.exports = {
   saveSettings,
+  toggleOnline,
 };
