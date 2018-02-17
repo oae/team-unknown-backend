@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bluebird = require('bluebird');
+const timestamps = require('mongoose-timestamp');
 
 const { WithdrawalStatus } = require('./constants');
 
@@ -14,6 +15,16 @@ const userDescription = {
   deviceId: String,
   location: LocationSchema,
 };
+
+const UserSchema = new Schema({
+  email: String,
+  password: String,
+  token: String,
+});
+
+const TokenSchema = new Schema({
+  token: String,
+});
 
 const MakerSchema = new Schema({
   ...userDescription,
@@ -37,11 +48,21 @@ const WithdrawalSchema = new Schema({
   },
 });
 
+UserSchema.plugin(timestamps);
+TokenSchema.plugin(timestamps);
+MakerSchema.plugin(timestamps);
+TakerSchema.plugin(timestamps);
+WithdrawalSchema.plugin(timestamps);
+
+const User = mongoose.model('User', UserSchema);
+const Token = mongoose.model('Token', TokenSchema);
 const Maker = mongoose.model('Maker', MakerSchema);
 const Taker = mongoose.model('Taker', TakerSchema);
 const Withdrawal = mongoose.model('Withdrawal', WithdrawalSchema);
 
 module.exports = bluebird.promisifyAll({
+  User,
+  Token,
   Maker,
   Taker,
   Withdrawal,

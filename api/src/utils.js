@@ -9,6 +9,36 @@ function latLngToPoint(lat, lng) {
   };
 }
 
+const RE_EMAIL = /[^\\.\\s@:][^\\s@:]*(?!\\.)@[^\\.\\s@]+(?:\\.[^\\.\\s@]+)*/;
+
+function validateEmail(email) {
+  if (!_.isString(email) || _.isEmpty(email)) {
+    const err = new ValidationError('Email must be present');
+    err.fieldName = 'email';
+    throw err;
+  }
+
+  if (!RE_EMAIL.test(email)) {
+    const err = new ValidationError('You need to provide a valid email');
+    err.fieldName = 'email';
+    throw err;
+  }
+}
+
+function validatePassword(password) {
+  if (!_.isString(password) || _.isEmpty(password)) {
+    const err = new ValidationError('Password must be present');
+    err.fieldName = 'password';
+    throw err;
+  }
+
+  if (password.length < 6) {
+    const err = new ValidationError('Password must be at least 6 character');
+    err.fieldName = 'password';
+    throw err;
+  }
+}
+
 function validateNumber({ number, min, max, fieldName }) {
   try {
     if (!_.isFinite(number)) {
@@ -31,5 +61,7 @@ function validateNumber({ number, min, max, fieldName }) {
 
 module.exports = {
   latLngToPoint,
+  validateEmail,
+  validatePassword,
   validateNumber,
 };

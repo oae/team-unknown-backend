@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const config = require('./config');
 const makerService = require('./services/makerService');
 const takerService = require('./services/takerService');
+const userService = require('./services/userService');
 
 require('./worker');
 
@@ -49,6 +50,9 @@ app.post(
   '/taker/create-withdrawal/:deviceId',
   handle(takerService.createWithdrawal)
 );
+
+app.post('/user/register', handle(userService.register));
+app.post('/user/login', handle(userService.login));
 
 app.listen(process.env.PORT, function() {
   debug('http server is listening on port %s', process.env.PORT);

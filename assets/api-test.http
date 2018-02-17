@@ -41,3 +41,19 @@ content-type: application/json
     "lng": "38.850000"
   }
 }
+
+POST http://localhost:13000/user/register
+content-type: application/json
+
+{
+  "email": "a@a",
+  "password": "123456"
+}
+
+POST http://localhost:13000/user/login
+content-type: application/json
+
+{
+  "email": "a@a",
+  "password": "123456"
+}
