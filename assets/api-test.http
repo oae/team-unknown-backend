@@ -46,7 +46,8 @@ content-type: application/json
 Authorization: Bearer demo-taker-1
 
 {
-  "amount": 100
+  "amount": 100,
+  "location": ["41.082185", "22.027520"]
 }
 
 POST http://localhost:13000/user/register

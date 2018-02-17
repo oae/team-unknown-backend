@@ -8,14 +8,13 @@ const {
   WithdrawalStatus,
   TAKER_MIN_AMOUNT,
   TAKER_MAX_AMOUNT,
-  DEFAULT_LOCATION,
 } = require('../constants');
 const { validateNumber, latLngToPoint } = require('../utils');
 const { findMaker } = require('../queue');
 
 async function createWithdrawal(body, req) {
   const { user } = req;
-  const { amount } = body;
+  const { amount, location } = body;
 
   validateNumber({
     number: amount,
@@ -28,12 +27,15 @@ async function createWithdrawal(body, req) {
     status: WithdrawalStatus.MATCHING,
     amount,
     taker: user,
-    takerLocation: user.location || latLngToPoint(...DEFAULT_LOCATION),
+    takerLocation: latLngToPoint(...location),
   });
 
   await withdrawal.save();
-
   debug('Created a new withdrawal for %s', user.id);
+
+  user.location = latLngToPoint(...location);
+  await user.save();
+  debug('Updated user location.');
 
   const job = await findMaker
     .createJob({
