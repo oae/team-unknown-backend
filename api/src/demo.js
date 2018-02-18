@@ -46,7 +46,7 @@ async function createTaker(index) {
 async function createMaker(index) {
   const user = await createDemoUser('demo-maker', index);
   user.maker = {
-    online: true,
+    online: false,
     minAmount: MAKER_MIN_AMOUNT,
     maxAmount: MAKER_MAX_AMOUNT,
     range: MAKER_MAX_RANGE,
