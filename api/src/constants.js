@@ -7,12 +7,12 @@ const WithdrawalStatus = {
 };
 
 const TAKER_MIN_AMOUNT = 100;
-const TAKER_MAX_AMOUNT = 1000;
+const TAKER_MAX_AMOUNT = 5000;
 
 const MAKER_MIN_AMOUNT = 100;
-const MAKER_MAX_AMOUNT = 1000;
+const MAKER_MAX_AMOUNT = 5000;
 const MAKER_MIN_RANGE = 0;
-const MAKER_MAX_RANGE = 5000;
+const MAKER_MAX_RANGE = 50000;
 
 const DEFAULT_LOCATION = [41.080635, 29.017626];
 
