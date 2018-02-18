@@ -39,7 +39,7 @@ async function saveSettings(body, req) {
     });
 
     user.maker = {
-      ...user.maker,
+      online: user.maker.online,
       minAmount,
       maxAmount,
       range,
