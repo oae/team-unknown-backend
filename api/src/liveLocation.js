@@ -99,8 +99,8 @@ const messageHandler = {
   },
 };
 
-wss.on('connection', function connection(ws) {
-  ws.on('message', async function incoming(message) {
+async function handleWebsocketConnection(ws) {
+  async function handleWebsocketMessage(message) {
     try {
       const msg = parseMessage(message);
       const handler = messageHandler[msg.type];
@@ -115,7 +115,40 @@ wss.on('connection', function connection(ws) {
       handler(ws, msg);
     } catch (err) {
       debug('error while handling WebsocketMessage %s', err.stack);
-      sendMessage(ws, { name: err.constructor.name });
+      sendMessage(ws, 'error', { name: err.constructor.name });
     }
-  });
-});
+  }
+  function cleanup() {
+    ws.removeEventListener('message', handleWebsocketMessage);
+  }
+  try {
+    debug('a client connected');
+    ws.on('message', handleWebsocketMessage);
+    ws.on('close', () => {
+      debug('client disconnected');
+      cleanup();
+    });
+  } catch (err) {
+    debug('error happened in ws message %s', err.stack);
+    cleanup();
+    throw err;
+  }
+}
+
+async function initSocket() {
+  try {
+    wss.on('connection', handleWebsocketConnection);
+  } catch (err) {
+    wss.off('connection', handleWebsocketConnection);
+    debug('error happened in websocketserver %s', err.stack);
+    debug('reinitializing websocket in 1000ms');
+
+    setTimeout(initSocket, 1000);
+  }
+}
+
+async function main() {
+  await initSocket();
+}
+
+main();
