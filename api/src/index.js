@@ -97,9 +97,21 @@ app.post(
 );
 
 app.post(
+  '/maker/complete-withdrawal',
+  authenticate,
+  handle(makerService.completeWithdrawal)
+);
+
+app.post(
   '/taker/create-withdrawal',
   authenticate,
   handle(takerService.createWithdrawal)
+);
+
+app.post(
+  '/taker/approve-withdrawal-completion',
+  authenticate,
+  handle(takerService.approveWithdrawalCompletion)
 );
 
 app.listen(process.env.PORT, '0.0.0.0', function() {

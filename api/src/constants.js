@@ -2,6 +2,7 @@ const WithdrawalStatus = {
   MATCHING: 'matching',
   MATCHED: 'matched',
   CANCELLED: 'cancelled',
+  PENDING_COMPLETION: 'pending_completion',
   COMPLETED: 'completed',
 };
 

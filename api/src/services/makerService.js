@@ -1,6 +1,9 @@
 const debug = require('debug')('pb:services:maker');
 
-const { confirmWithdrawalNotificationContent } = require('../templates');
+const {
+  confirmWithdrawalNotificationContent,
+  approveWithdrawalCompletionContent,
+} = require('../templates');
 const { sendNotification } = require('../notification');
 const { validateNumber } = require('../utils');
 const { Withdrawal } = require('../model');
@@ -123,8 +126,54 @@ async function confirmWithdrawal(body, req) {
   }
 }
 
+async function completeWithdrawal(body) {
+  try {
+    const { withdrawalId } = body;
+
+    const withdrawal = await Withdrawal.findById(withdrawalId)
+      .populate('taker')
+      .populate('maker')
+      .exec();
+
+    withdrawal.status = WithdrawalStatus.PENDING_COMPLETION;
+
+    debug(
+      'Withdrawal status set to %s for withdrawal: %s',
+      withdrawal.status,
+      withdrawalId
+    );
+
+    await withdrawal.save();
+
+    const taker = withdrawal.taker;
+
+    sendNotification({
+      contents: {
+        en: approveWithdrawalCompletionContent(
+          { amount: withdrawal.amount },
+          { language: 'en' }
+        ),
+        tr: approveWithdrawalCompletionContent(
+          { amount: withdrawal.amount },
+          { language: 'tr' }
+        ),
+      },
+      data: {
+        userId: taker._id,
+        withdrawal,
+      },
+    });
+
+    return withdrawal;
+  } catch (err) {
+    debug('error while saving withdrawal request %o', err);
+    throw err;
+  }
+}
+
 module.exports = {
   saveSettings,
   toggleOnline,
   confirmWithdrawal,
+  completeWithdrawal,
 };

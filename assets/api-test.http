@@ -38,7 +38,16 @@ Authorization: Bearer demo-maker-1
 
 {
   "isApproved": true,
-  "withdrawalId": "5a885ee39409ca0422a3acc2"
+  "withdrawalId": "5a88d6eff2c56502b040c5a2"
+}
+
+POST http://localhost:13000/maker/complete-withdrawal
+content-type: application/json
+Authorization: Bearer demo-maker-1
+
+{
+  "isApproved": true,
+  "withdrawalId": "5a88d6eff2c56502b040c5a2"
 }
 
 POST http://localhost:13000/taker/create-withdrawal
@@ -48,6 +57,14 @@ Authorization: Bearer demo-taker-1
 {
   "amount": 100,
   "location": ["41.082185", "22.027520"]
+}
+
+POST http://localhost:13000/taker/approve-withdrawal-completion
+content-type: application/json
+Authorization: Bearer demo-taker-1
+
+{
+  "withdrawalId": "5a88d6eff2c56502b040c5a2"
 }
 
 POST http://localhost:13000/user/register

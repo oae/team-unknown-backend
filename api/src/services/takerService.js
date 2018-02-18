@@ -69,6 +69,33 @@ async function createWithdrawal(body, req) {
   return withdrawal;
 }
 
+async function approveWithdrawalCompletion(body) {
+  try {
+    const { withdrawalId } = body;
+
+    const withdrawal = await Withdrawal.findById(withdrawalId)
+      .populate('taker')
+      .populate('maker')
+      .exec();
+
+    withdrawal.status = WithdrawalStatus.COMPLETED;
+
+    debug(
+      'Withdrawal status set to %s for withdrawal: %s',
+      withdrawal.status,
+      withdrawalId
+    );
+
+    await withdrawal.save();
+
+    return withdrawal;
+  } catch (err) {
+    debug('error while saving withdrawal request %o', err);
+    throw err;
+  }
+}
+
 module.exports = {
   createWithdrawal,
+  approveWithdrawalCompletion,
 };
