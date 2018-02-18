@@ -75,8 +75,17 @@ const messageHandler = {
 
     sendMessage(ws, 'response', { error: false }, { channel: msg.channel });
 
-    liveLocation.on(`live-location.${msg.payload.id}`, loc => {
+    const handleLocationUpdate = loc => {
       sendMessage(ws, 'notification', { loc }, { channel: 'live-location' });
+    };
+
+    liveLocation.on(`live-location.${msg.payload.id}`, handleLocationUpdate);
+
+    ws.on('close', () => {
+      liveLocation.removeListener(
+        `live-location.${msg.payload.id}`,
+        handleLocationUpdate
+      );
     });
   },
 
