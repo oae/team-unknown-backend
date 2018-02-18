@@ -42,7 +42,7 @@ async function saveSettings(body, req) {
     });
 
     user.maker = {
-      online: user.maker.online,
+      online: user.maker ? user.maker.online : false,
       minAmount,
       maxAmount,
       range,
