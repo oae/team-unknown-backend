@@ -39,6 +39,7 @@ async function saveSettings(body, req) {
     });
 
     user.maker = {
+      ...user.maker,
       minAmount,
       maxAmount,
       range,
